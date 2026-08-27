@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ExpenseFlow — Personal Expense Tracker</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+</head>
+<body>
+  <div class="app">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-top">
+        <h1>💸 ExpenseFlow</h1>
+        <div class="header-controls">
+          <button id="profileBtn" class="header-btn" title="Set your name for PDF signature">👤 Name</button>
+          <select id="currencySelect" class="currency-select" title="Select currency">
+            <option value="USD">🇺🇸 USD ($)</option>
+            <option value="EUR">🇪🇺 EUR (€)</option>
+            <option value="GBP">🇬🇧 GBP (£)</option>
+            <option value="ETB">🇪🇹 ETB (Br)</option>
+            <option value="JPY">🇯🇵 JPY (¥)</option>
+            <option value="INR">🇮🇳 INR (₹)</option>
+            <option value="KES">🇰🇪 KES (KSh)</option>
+            <option value="NGN">🇳🇬 NGN (₦)</option>
+            <option value="AED">🇦🇪 AED (د.إ)</option>
+            <option value="SAR">🇸🇦 SAR (﷼)</option>
+          </select>
+          <button id="themeToggle" class="header-btn" title="Toggle dark/light mode">
+            <span id="themeIcon">🌙</span>
+          </button>
+        </div>
+      </div>
+      <p class="tagline">Track your spending. Own your budget.</p>
+    </header>
+
+    <!-- Stats Dashboard -->
+    <section class="stats-dashboard">
+      <div class="stat-row">
+        <div class="stat-card primary">
+          <span class="stat-icon">💰</span>
+          <span class="stat-label">Total Spent</span>
+          <span class="stat-value" id="totalSpent">$0.00</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-icon">📊</span>
+          <span class="stat-label">Entries</span>
+          <span class="stat-value" id="entryCount">0</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-icon">📅</span>
+          <span class="stat-label">This Month</span>
+          <span class="stat-value" id="monthSpent">$0.00</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-icon">📉</span>
+          <span class="stat-label">Avg / Entry</span>
+          <span class="stat-value" id="avgSpent">$0.00</span>
+        </div>
+      </div>
+      <div class="stat-row">
+        <div class="stat-card accent-green">
+          <span class="stat-icon">🏆</span>
+          <span class="stat-label">Biggest Expense</span>
+          <span class="stat-value sm" id="biggestExpense">—</span>
+        </div>
+        <div class="stat-card accent-orange">
+          <span class="stat-icon">📌</span>
+          <span class="stat-label">Top Category</span>
+          <span class="stat-value sm" id="topCategory">—</span>
+        </div>
+        <div class="stat-card accent-purple">
+          <span class="stat-icon">🗓️</span>
+          <span class="stat-label">Daily Average</span>
+          <span class="stat-value" id="dailyAvg">$0.00</span>
+        </div>
+        <div class="stat-card accent-pink">
+          <span class="stat-icon">🔥</span>
+          <span class="stat-label">Active Days</span>
+          <span class="stat-value" id="activeDays">0</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Charts Section -->
+    <section class="charts-section">
+      <div class="chart-box">
+        <h3>📊 Spending by Category</h3>
+        <div class="chart-wrap"><canvas id="categoryChart"></canvas></div>
+      </div>
+      <div class="chart-box">
+        <h3>📈 Spending Trend (Last 7 Days)</h3>
+        <div class="chart-wrap"><canvas id="trendChart"></canvas></div>
+      </div>
+      <div class="chart-box">
+        <h3>🥧 Category Breakdown</h3>
+        <div class="chart-wrap"><canvas id="barChart"></canvas></div>
+      </div>
+      <div class="chart-box insights-box">
+        <h3>💡 Spending Insights</h3>
+        <ul id="insightsList" class="insights-list">
+          <li class="insight-item">Add some expenses to see insights!</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Add Expense Form -->
+    <section class="form-section">
+      <h2>Add Expense</h2>
+      <form id="expenseForm" class="expense-form">
+        <input type="text" id="description" placeholder="Description (e.g. Coffee at Starbucks)" required />
+        <input type="number" id="amount" placeholder="Amount" step="0.01" min="0.01" required />
+        <select id="category" required>
+          <option value="">Category</option>
+          <optgroup label="🍔 Food & Drinks">
+            <option value="Food">🍔 Food</option>
+            <option value="Groceries">🛒 Groceries</option>
+            <option value="Restaurants">🍽️ Restaurants</option>
+            <option value="Coffee">☕ Coffee</option>
+            <option value="Drinks">🍺 Drinks & Nightlife</option>
+            <option value="Snacks">🍫 Snacks</option>
+          </optgroup>
+          <optgroup label="🚗 Transport">
+            <option value="Transport">🚗 General Transport</option>
+            <option value="Fuel">⛽ Fuel</option>
+            <option value="Public Transport">🚌 Public Transport</option>
+            <option value="Taxi/Ride">🚕 Taxi / Ride Share</option>
+            <option value="Parking">🅿️ Parking</option>
+          </optgroup>
+          <optgroup label="🛍️ Shopping">
+            <option value="Shopping">🛍️ General Shopping</option>
+            <option value="Clothing">👕 Clothing</option>
+            <option value="Electronics">📱 Electronics</option>
+            <option value="Home">🏠 Home & Furniture</option>
+            <option value="Gifts">🎁 Gifts</option>
+          </optgroup>
+          <optgroup label="📄 Bills & Utilities">
+            <option value="Bills">📄 General Bills</option>
+            <option value="Rent">🏠 Rent</option>
+            <option value="Electricity">⚡ Electricity</option>
+            <option value="Water">💧 Water</option>
+            <option value="Internet">🌐 Internet</option>
+            <option value="Phone">📱 Phone Bill</option>
+            <option value="Insurance">🛡️ Insurance</option>
+            <option value="Subscriptions">🔁 Subscriptions</option>
+          </optgroup>
+          <optgroup label="🎬 Entertainment">
+            <option value="Entertainment">🎬 General Entertainment</option>
+            <option value="Movies">🎥 Movies</option>
+            <option value="Music">🎵 Music</option>
+            <option value="Games">🎮 Games</option>
+            <option value="Sports">⚽ Sports</option>
+            <option value="Travel">✈️ Travel</option>
+          </optgroup>
+          <optgroup label="🏥 Health">
+            <option value="Health">🏥 General Health</option>
+            <option value="Medicine">💊 Medicine</option>
+            <option value="Doctor">👨‍⚕️ Doctor Visit</option>
+            <option value="Gym">💪 Gym & Fitness</option>
+          </optgroup>
+          <optgroup label="🎓 Education">
+            <option value="Education">🎓 General Education</option>
+            <option value="Tuition">🏫 Tuition</option>
+            <option value="Books">📚 Books</option>
+            <option value="Courses">💻 Online Courses</option>
+          </optgroup>
+          <optgroup label="📦 Other">
+            <option value="Personal Care">💄 Personal Care</option>
+            <option value="Charity">❤️ Charity & Donations</option>
+            <option value="Other">📦 Other</option>
+            <option value="Business">💼 Business Expense</option>
+            <option value="Fees">🏦 Bank Fees</option>
+            <option value="Taxes">🏛️ Taxes</option>
+          </optgroup>
+        </select>
+        <button type="submit" class="btn-add">Add</button>
+      </form>
+    </section>
+
+    <!-- Expense List -->
+    <section class="list-section">
+      <div class="list-header">
+        <h2>Recent Expenses</h2>
+        <div class="list-controls">
+          <input type="text" id="searchInput" placeholder="🔍 Search..." class="search-input" />
+          <button id="downloadPdf" class="btn-pdf" title="Download PDF report">📄 Download PDF</button>
+        </div>
+      </div>
+      <ul id="expenseList" class="expense-list">
+        <li class="empty-state">No expenses yet. Add one above! 👆</li>
+      </ul>
+    </section>
+
+    <!-- Edit Modal -->
+    <div class="modal-overlay" id="editModal" style="display:none;">
+      <div class="modal">
+        <h2>✏️ Edit Expense</h2>
+        <form id="editForm">
+          <label>Description</label>
+          <input type="text" id="editDescription" required />
+          <label>Amount</label>
+          <input type="number" id="editAmount" step="0.01" min="0.01" required />
+          <label>Category</label>
+          <select id="editCategory" required></select>
+          <label>Date</label>
+          <input type="date" id="editDate" required />
+          <div class="modal-buttons">
+            <button type="submit" class="btn-save">💾 Save Changes</button>
+            <button type="button" class="btn-cancel" id="closeEdit">✕ Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Profile Modal -->
+    <div class="modal-overlay" id="profileModal" style="display:none;">
+      <div class="modal">
+        <h2>👤 Your Name (for PDF signature)</h2>
+        <form id="profileForm">
+          <label>Your Name</label>
+          <input type="text" id="userName" placeholder="e.g. Luel Zelalem" maxlength="50" />
+          <p class="modal-hint">This name will appear as a signature on your downloaded PDF reports.</p>
+          <div class="modal-buttons">
+            <button type="submit" class="btn-save">💾 Save Name</button>
+            <button type="button" class="btn-cancel" id="closeProfile">✕ Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <p><a href="index.html" class="back-home-link" style="margin-right: 12px; color: var(--primary); font-weight: 600; text-decoration: none;">← Back to Home</a> | Made with 💙 by <span id="footerName">Luel Zelalem</span> — <a href="https://github.com/luelzelalem848-max/expenseflow" target="_blank">View on GitHub</a></p>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
