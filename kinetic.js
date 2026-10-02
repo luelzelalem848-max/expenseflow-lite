@@ -21,6 +21,7 @@
       var final = el.textContent;
       var end = parseNum(final);
       if (end === null) return;
+      if (document.hidden) { prev = end; return; }
       var start = prev;
       var d = decOf(final);
       busy = true;
@@ -31,8 +32,9 @@
         var v = start + (end - start) * e;
         el.textContent = final.replace(/-?[\d,]*\.?\d+/, v.toLocaleString(undefined, { minimumFractionDigits: d, maximumFractionDigits: d }));
         if (p < 1) requestAnimationFrame(step);
-        else { busy = false; prev = end; }
+        else { el.textContent = final; busy = false; prev = end; }
       })(t0);
+      setTimeout(function () { if (busy) { el.textContent = final; busy = false; prev = end; } }, dur + 250);
     });
     obs.observe(el, { childList: true, characterData: true, subtree: true });
   });
