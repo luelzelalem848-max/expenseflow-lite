@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ExpenseFlow — Track Your Spending. Own Your Budget.</title>
+  <link rel="stylesheet" href="landing.css" />
+<link rel="stylesheet" href="modern.css" />
+<style>
+/* ============ v7 LITE UPGRADES ============ */
+.fx-video { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; pointer-events:none; opacity:.4; z-index:0; }
+.hero .fx-video { opacity:.5; }
+.fx-video-shade { position:absolute; inset:0; pointer-events:none; z-index:1;
+  background: radial-gradient(ellipse 80% 70% at 30% 40%, transparent 30%, var(--bg-dark) 95%); }
+.hero .container, .navbar, section { position: relative; z-index: 2; }
+.feature-icon-wrapper { color: var(--primary, #34d399); font-size: 0; line-height: 0; }
+.feature-icon-wrapper svg { filter: drop-shadow(0 0 10px rgba(52,211,153,.55)); opacity:.9; }
+/* app page: fixed cinematic video behind everything */
+.fx-video-fixed { position: fixed; inset: 0; width: 100vw; height: 100vh; object-fit: cover;
+  pointer-events: none; z-index: -1; opacity: .35; filter: brightness(.85) saturate(1.2); }
+/* version chip */
+#ultra-chip { position: fixed; right: 14px; bottom: 14px; z-index: 2147483000;
+  font: 600 11px/1 'Space Grotesk', sans-serif; letter-spacing: 1px; color: #c7cfff;
+  background: rgba(10,14,28,.72); border: 1px solid rgba(52,211,153,.35);
+  padding: 7px 11px; border-radius: 999px; backdrop-filter: blur(10px);
+  box-shadow: 0 8px 26px rgba(0,0,0,.5); pointer-events: none; }
+</style>
+<script type="speculationrules">{"prefetch":[{"source":"document","where":{"href_matches":"/*"},"eagerness":"conservative"}]}</script>
+<style>[data-theme="light"] .fx-video, [data-theme="light"] .fx-video-fixed { opacity: .1 !important; filter: saturate(1.4); }</style>
+</head>
+<body>
+
+  <!-- Ambient Background Glow Orbs -->
+  <div class="bg-glow-container" aria-hidden="true">
+    <div class="glow-orb glow-orb-1"></div>
+    <div class="glow-orb glow-orb-2"></div>
+    <div class="glow-orb glow-orb-3"></div>
+  </div>
+
+  <!-- Sticky Navbar -->
+  <nav class="navbar">
+    <div class="container nav-container">
+      <a href="#" class="logo">
+        <span class="logo-icon">💸</span>
+        <span>ExpenseFlow</span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#how-it-works">How It Works</a></li>
+        <li><a href="#stats">Stats</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <a href="app.html" class="btn btn-primary">Launch App</a>
+        <button class="nav-toggle" aria-label="Toggle Navigation">☰</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <video class="fx-video" autoplay muted loop playsinline preload="auto" disablepictureinpicture aria-hidden="true"><source src="assets/bg-video.mp4" type="video/mp4"></video>
+    <div class="fx-video-shade"></div>
+    <div class="container hero-grid">
+      <div class="hero-content reveal">
+        <div class="badge">
+          <span class="badge-dot"></span>
+          <span>100% Free & Browser-Based</span>
+        </div>
+        <h1 class="hero-title">
+          <span class="gradient-text">Track Your Spending.</span><br />
+          <span class="gradient-text-accent">Own Your Budget.</span>
+        </h1>
+        <p class="hero-subtitle">
+          Take full control of your personal finances with real-time statistics, visual breakdown charts, multi-currency support, and signed PDF exports.
+        </p>
+        <div class="hero-buttons">
+          <a href="app.html" class="btn btn-primary btn-lg">Launch App</a>
+          <a href="https://github.com/luelzelalem848-max/expenseflow" target="_blank" rel="noopener" class="btn btn-secondary btn-lg">View on GitHub 🐙</a>
+        </div>
+      </div>
+
+      <!-- Animated Floating Expense Cards Background Visual -->
+      <div class="hero-visual reveal delay-2">
+        <!-- Floating Card 1 -->
+        <div class="floating-card fc-1">
+          <div class="fc-icon" style="background: rgba(239, 68, 68, 0.15); color: #f87171;">☕</div>
+          <div class="fc-info">
+            <h4>Starbucks Coffee</h4>
+            <p>Food & Drinks</p>
+          </div>
+          <div class="fc-amount neg">-$4.50</div>
+        </div>
+
+        <!-- Floating Card 2 -->
+        <div class="floating-card fc-2">
+          <div class="fc-icon" style="background: rgba(16, 185, 129, 0.15); color: #34d399;">🛒</div>
+          <div class="fc-info">
+            <h4>Supermarket</h4>
+            <p>Groceries</p>
+          </div>
+          <div class="fc-amount neg">-$64.20</div>
+        </div>
+
+        <!-- Floating Card 3 -->
+        <div class="floating-card fc-3">
+          <div class="fc-icon" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24;">⚡</div>
+          <div class="fc-info">
+            <h4>Electricity Bill</h4>
+            <p>Bills & Utilities</p>
+          </div>
+          <div class="fc-amount neg">-$85.00</div>
+        </div>
+
+        <!-- Floating Card 4 -->
+        <div class="floating-card fc-4">
+          <div class="fc-icon" style="background: rgba(99, 102, 241, 0.15); color: #34d399;">✈️</div>
+          <div class="fc-info">
+            <h4>Flight Booking</h4>
+            <p>Travel</p>
+          </div>
+          <div class="fc-amount neg">-$320.00</div>
+        </div>
+
+        <!-- Center Summary Glass Card -->
+        <div class="visual-center-card">
+          <div class="center-card-header">
+            <span class="center-card-title">Total Spent</span>
+            <span style="font-size: 0.85rem; color: #34d399; font-weight: 700;">▲ 12% vs last month</span>
+          </div>
+          <div class="center-card-amount">$473.70</div>
+          <div style="font-size: 0.85rem; color: var(--text-muted); display: flex; justify-content: space-between;">
+            <span>Category Breakdown</span>
+            <span>4 Entries</span>
+          </div>
+          <div class="mini-chart">
+            <div class="bar" style="height: 40%; background: linear-gradient(to top, #10b981, #34d399);" title="Food"></div>
+            <div class="bar" style="height: 75%; background: linear-gradient(to top, #ec4899, #f472b6);" title="Groceries"></div>
+            <div class="bar" style="height: 60%; background: linear-gradient(to top, #f59e0b, #fbbf24);" title="Bills"></div>
+            <div class="bar" style="height: 100%; background: linear-gradient(to top, #8b5cf6, #f5b942);" title="Travel"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section id="features" class="section">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-subtitle">Features</span>
+        <h2 class="section-title">Everything You Need to Budget Smart</h2>
+        <p class="section-desc">Designed for speed, clarity, and total control over your financial records.</p>
+      </div>
+
+      <div class="features-grid">
+        <!-- Feature 1 -->
+        <div class="feature-card reveal delay-1">
+          <div class="feature-icon-wrapper"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20v-8"/><path d="M10 20V6"/><path d="M16 20v-9"/><path d="M22 20H2"/></svg></div>
+          <h3>Smart Statistics</h3>
+          <p>Track total spent, daily average, top spending categories, monthly trends, and automated financial insights in real-time.</p>
+        </div>
+
+        <!-- Feature 2 -->
+        <div class="feature-card reveal delay-2">
+          <div class="feature-icon-wrapper"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></div>
+          <h3>Edit Anything</h3>
+          <p>Full flexibility to edit descriptions, amounts, categories, and dates or search through past expenses instantly.</p>
+        </div>
+
+        <!-- Feature 3 -->
+        <div class="feature-card reveal delay-3">
+          <div class="feature-icon-wrapper"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l5 5v12a2 2 0 0 1-2 2H6V3z"/><path d="M15 3v5h5"/><path d="M9 13h6"/><path d="M9 17h4"/></svg></div>
+          <h3>Signed PDF Reports</h3>
+          <p>Generate professional, customized PDF expense reports complete with your personal signature and currency breakdown.</p>
+        </div>
+
+        <!-- Feature 4 -->
+        <div class="feature-card reveal delay-4">
+          <div class="feature-icon-wrapper"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18 14 14 0 0 1 0-18z"/></svg></div>
+          <h3>Multi-Currency</h3>
+          <p>Seamlessly switch between 20 currencies including USD, EUR, GBP, ETB, JPY, INR, KES, NGN, AED, SAR, and more.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works Section -->
+  <section id="how-it-works" class="section how-it-works">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-subtitle">Workflow</span>
+        <h2 class="section-title">How It Works</h2>
+        <p class="section-desc">Start managing your money in 3 dead-simple steps — no sign-up or backend required.</p>
+      </div>
+
+      <div class="steps-wrapper">
+        <!-- Step 1 -->
+        <div class="step-card reveal delay-1">
+          <div class="step-number">1</div>
+          <h3>Add Expenses</h3>
+          <p>Enter your daily transactions with customizable categories, amounts, and dates in seconds.</p>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="step-card reveal delay-2">
+          <div class="step-number">2</div>
+          <h3>View Statistics</h3>
+          <p>Analyze interactive charts, monthly trend lines, and automated insights to monitor your spending habits.</p>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="step-card reveal delay-3">
+          <div class="step-number">3</div>
+          <h3>Download Report</h3>
+          <p>Export clean, signed PDF summary reports anytime for budgeting, archiving, or tax filing.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats Section -->
+  <section id="stats" class="section">
+    <div class="container">
+      <div class="stats-banner reveal">
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-number-wrap">
+              <span class="stat-number" data-target="50" data-suffix="+">0</span>
+            </div>
+            <div class="stat-title">Categories</div>
+          </div>
+
+          <div class="stat-item">
+            <div class="stat-number-wrap">
+              <span class="stat-number" data-target="20" data-suffix="">0</span>
+            </div>
+            <div class="stat-title">Currencies</div>
+          </div>
+
+          <div class="stat-item">
+            <div class="stat-number-wrap">
+              <span class="stat-number" data-target="3" data-suffix="">0</span>
+            </div>
+            <div class="stat-title">Charts</div>
+          </div>
+
+          <div class="stat-item">
+            <div class="stat-number-wrap">
+              <span class="stat-number" data-target="100" data-suffix="%">0</span>
+            </div>
+            <div class="stat-title">Free</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="section">
+    <div class="container">
+      <div class="cta-box reveal">
+        <h2 class="cta-title">Ready to Take Control?</h2>
+        <p class="cta-desc">Start tracking your spending today. No credit cards, no account registration — 100% private in your browser.</p>
+        <a href="app.html" class="btn btn-primary btn-lg">Launch App</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="#" class="logo">
+            <span class="logo-icon">💸</span>
+            <span>ExpenseFlow</span>
+          </a>
+          <p>A sleek, modern expense tracker designed to keep your budgeting clean, simple, and private.</p>
+        </div>
+
+        <div class="footer-col">
+          <h4>Navigation</h4>
+          <ul>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#how-it-works">How It Works</a></li>
+            <li><a href="#stats">Stats</a></li>
+            <li><a href="app.html">Launch App</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Features</h4>
+          <ul>
+            <li><a href="app.html">Smart Analytics</a></li>
+            <li><a href="app.html">PDF Export</a></li>
+            <li><a href="app.html">Multi-Currency</a></li>
+            <li><a href="app.html">Dark & Light Mode</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Open Source</h4>
+          <ul>
+            <li><a href="https://github.com/luelzelalem848-max/expenseflow" target="_blank" rel="noopener">GitHub Repository</a></li>
+            <li><a href="https://github.com/luelzelalem848-max/expenseflow/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>Made with 💙 by <a href="https://github.com/luelzelalem848-max" target="_blank" rel="noopener">Luel Zelalem</a></div>
+        <div>&copy; ExpenseFlow. All rights reserved.</div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="landing.js"></script>
+<script src="kinetic.js"></script>
+<script src="modern.js"></script>
+<script>document.addEventListener("DOMContentLoaded",function(){var c=document.createElement("div");c.id="ultra-chip";c.textContent="✦ ULTRA v8";document.body.appendChild(c);});</script>
+</body>
+</html>
