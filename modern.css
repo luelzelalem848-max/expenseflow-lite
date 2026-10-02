@@ -1,0 +1,61 @@
+/* ================================================================
+   v7 MODERN WEB PACK — latest platform features, progressively enhanced
+   ================================================================ */
+
+/* 1. Cross-document View Transitions — app-like page morphs
+      (Chrome 126+, Safari 18.2+; ignored elsewhere) */
+@view-transition { navigation: auto; }
+
+/* 2. Smooth anchor scrolling */
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+/* 3. Scroll progress bar */
+#fx-progress {
+  position: fixed; top: 0; left: 0; right: 0; height: 2.5px;
+  z-index: 2147483299; pointer-events: none;
+  transform-origin: 0 50%; transform: scaleX(0);
+  background: linear-gradient(90deg, #818cf8, #c084fc, #f5b942);
+  box-shadow: 0 0 14px rgba(129,140,248,.55);
+}
+
+/* 4. Native CSS scroll-driven parallax (Chromium; no JS needed) */
+@supports (animation-timeline: view()) {
+  .hero-inner {
+    animation: fx-hero-drift both linear;
+    animation-timeline: view();
+    animation-range: entry 0% exit 100%;
+  }
+  @keyframes fx-hero-drift {
+    to { transform: translateY(-72px) scale(.94); opacity: .12; }
+  }
+  .fx-hero {
+    animation: fx-app-hero-drift both linear;
+    animation-timeline: view();
+    animation-range: exit 0% exit 90%;
+  }
+  @keyframes fx-app-hero-drift {
+    to { transform: scale(.965); opacity: .25; }
+  }
+}
+
+/* 5. Kinetic letters */
+.kl { display: inline-block; will-change: transform, opacity; }
+
+/* 6. Themed scrollbar */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: rgba(255,255,255,.03); }
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(129,140,248,.5), rgba(192,132,252,.5));
+  border-radius: 99px; border: 2px solid rgba(0,0,0,.35);
+}
+::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, rgba(129,140,248,.8), rgba(192,132,252,.8)); }
+html { scrollbar-color: rgba(129,140,248,.5) rgba(255,255,255,.03); scrollbar-width: thin; }
+
+/* 7. Tabular numerals for stats */
+.stat-value, .hero-num, #totalSpent, #monthSpent, .stat-card b { font-variant-numeric: tabular-nums; }
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root), ::view-transition-new(root) { animation: none; }
+  .kl { animation: none !important; }
+}

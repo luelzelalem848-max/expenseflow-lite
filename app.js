@@ -1,5 +1,16 @@
 // ====== ExpenseFlow v4 — Edit, Stats, Signed PDF ======
 
+/* ---- v7 premium chart defaults ---- */
+if (window.Chart) {
+  Chart.defaults.font.family = "'Space Grotesk', sans-serif";
+  Chart.defaults.color = 'rgba(255,255,255,.55)';
+  Chart.defaults.plugins.tooltip.backgroundColor = 'rgba(8,12,26,.92)';
+  Chart.defaults.plugins.tooltip.borderColor = 'rgba(255,255,255,.14)';
+  Chart.defaults.plugins.tooltip.borderWidth = 1;
+  Chart.defaults.plugins.tooltip.padding = 12;
+  Chart.defaults.plugins.tooltip.cornerRadius = 12;
+  Chart.defaults.plugins.tooltip.displayColors = false;
+}
 const STORAGE_KEY = 'expenseflow_data';
 const THEME_KEY = 'expenseflow_theme';
 const CURRENCY_KEY = 'expenseflow_currency';
@@ -205,7 +216,7 @@ function renderCharts() {
     chart1 = new Chart(ctx1, {
       type: 'doughnut',
       data: { labels: labels1, datasets: [{ data: data1, backgroundColor: colors.barColors.slice(0, labels1.length), borderWidth: 0 }] },
-      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: colors.text, font: { size: 10 }, padding: 8 } } } }
+      options: { cutout: '70%', hoverOffset: 10, responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: colors.text, font: { size: 10 }, padding: 8 } } } }
     });
   }
 
@@ -227,8 +238,8 @@ function renderCharts() {
   if (expenses.length > 0) {
     chart2 = new Chart(ctx2, {
       type: 'line',
-      data: { labels: dayLabels, datasets: [{ label: 'Daily Spending', data: dayData, borderColor: '#6366f1', backgroundColor: 'rgba(99,102,241,0.1)', fill: true, tension: 0.3, pointRadius: 4, pointBackgroundColor: '#6366f1' }] },
-      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: colors.text, font: { size: 10 } } } }, scales: { x: { ticks: { color: colors.text, font: { size: 9 } }, grid: { color: colors.grid } }, y: { ticks: { color: colors.text, font: { size: 9 } }, grid: { color: colors.grid } } } }
+      data: { labels: dayLabels, datasets: [{ label: 'Daily Spending', data: dayData, borderColor: '#818cf8', fill: true, tension: 0.4, pointRadius: 3, pointHoverRadius: 6, pointBackgroundColor: '#818cf8', backgroundColor: function (c) { var g = c.chart.ctx.createLinearGradient(0, 0, 0, 280); g.addColorStop(0, 'rgba(129,140,248,.45)'); g.addColorStop(1, 'rgba(129,140,248,0)'); return g; } }] },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: colors.text, font: { size: 10 } } } }, scales: { x: { ticks: { color: colors.text, font: { size: 9 } }, grid: { display: false } }, y: { ticks: { color: colors.text, font: { size: 9 } }, grid: { color: 'rgba(255,255,255,.05)' } } } }
     });
   }
 
@@ -238,8 +249,8 @@ function renderCharts() {
   if (labels1.length > 0) {
     chart3 = new Chart(ctx3, {
       type: 'bar',
-      data: { labels: labels1, datasets: [{ data: data1, backgroundColor: colors.barColors.slice(0, labels1.length), borderRadius: 6, borderWidth: 0 }] },
-      options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { ticks: { color: colors.text, font: { size: 9 } }, grid: { color: colors.grid } }, y: { ticks: { color: colors.text, font: { size: 9 } }, grid: { display: false } } } }
+      data: { labels: labels1, datasets: [{ data: data1, backgroundColor: colors.barColors.slice(0, labels1.length), borderRadius: 8, borderWidth: 0 }] },
+      options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { ticks: { color: colors.text, font: { size: 9 } }, grid: { display: false } }, y: { ticks: { color: colors.text, font: { size: 9 } }, grid: { display: false } } } }
     });
   }
 }
