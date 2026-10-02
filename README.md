@@ -5,7 +5,7 @@ A sleek, modern personal expense tracker and landing page that runs entirely in 
 ![ExpenseFlow](https://raw.githubusercontent.com/luelzelalem848-max/expenseflow/main/index.html)
 
 ## ✨ Landing Page Features
-- 🚀 **Stunning Landing Page (`index.html`)** — Glassmorphism dark theme with purple/indigo gradients (`#6366f1`)
+- 🚀 **Stunning Landing Page (`index.html`)** — Glassmorphism dark theme with purple/indigo gradients (`#10b981`)
 - 💫 **Floating Animated Expense Cards** — Dynamic CSS keyframe animations
 - 📜 **Scroll Reveal Animations** — Smooth intersection observer reveals with stagger delay
 - 🔢 **Animated Stat Counters** — Counts up automatically on scroll (50+ Categories, 20 Currencies, 3 Charts, 100% Free)

@@ -42,7 +42,7 @@
     var spot = document.createElement('div');
     spot.style.cssText = 'position:fixed;left:0;top:0;width:520px;height:520px;margin:-260px 0 0 -260px;' +
       'pointer-events:none;z-index:1;border-radius:50%;mix-blend-mode:screen;opacity:.5;' +
-      'background:radial-gradient(circle, rgba(129,140,248,0.16), rgba(129,140,248,0.05) 45%, transparent 70%);' +
+      'background:radial-gradient(circle, rgba(52,211,153,0.16), rgba(52,211,153,0.05) 45%, transparent 70%);' +
       'transition:opacity .3s;will-change:transform;';
     document.body.appendChild(spot);
     var sx = -600, sy = -600, px = -600, py = -600;

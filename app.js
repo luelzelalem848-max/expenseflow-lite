@@ -58,6 +58,26 @@ const categoryOptions = [
 ];
 
 // ---- Load/Save ----
+
+// ---- Live exchange rates (auto-refresh, offline fallback) ----
+const FALLBACK_RATES = { USD: 1, ETB: 122, EUR: 0.85, GBP: 0.74, JPY: 150, INR: 83.5, KES: 129, NGN: 1550, AED: 3.67, SAR: 3.75 };
+let RATES = Object.assign({}, FALLBACK_RATES);
+function loadRates() {
+  try {
+    const cached = JSON.parse(localStorage.getItem('expenseflow_rates') || 'null');
+    if (cached && Date.now() - cached.t < 12 * 3600 * 1000 && cached.r) { RATES = Object.assign({}, FALLBACK_RATES, cached.r); return; }
+  } catch (e) {}
+  fetch('https://open.er-api.com/v6/latest/USD').then(function (r) { return r.json(); }).then(function (d) {
+    if (d && d.rates) {
+      RATES = Object.assign({}, FALLBACK_RATES, d.rates);
+      try { localStorage.setItem('expenseflow_rates', JSON.stringify({ t: Date.now(), r: d.rates })); } catch (e) {}
+      if (typeof renderAll === 'function') renderAll();
+    }
+  }).catch(function () {});
+}
+function cv(amount, from) { const f = RATES[from] || 1, t = RATES[currentCurrency] || 1; return amount * (t / f); }
+function amt(e) { return cv(e.amount, e.currency || currentCurrency); }
+
 function loadAll() {
   const savedExp = localStorage.getItem(STORAGE_KEY);
   if (savedExp) { try { expenses = JSON.parse(savedExp); } catch(e) { expenses = []; } }
@@ -66,6 +86,7 @@ function loadAll() {
   const savedName = localStorage.getItem(NAME_KEY);
   if (savedName) userName = savedName;
   document.getElementById('currencySelect').value = currentCurrency;
+  expenses.forEach(function (e) { if (!e.currency) e.currency = currentCurrency; });
   document.getElementById('userName').value = userName;
   document.getElementById('footerName').textContent = userName;
 }
@@ -100,13 +121,13 @@ function toggleTheme() {
 function chartColors() {
   const isLight = document.documentElement.getAttribute('data-theme') === 'light';
   return isLight
-    ? { grid: '#e2e8f0', text: '#64748b', barColors: ['#6366f1','#22c55e','#f59e0b','#ef4444','#3b82f6','#ec4899','#a855f7','#14b8a6','#f97316','#8b5cf6','#06b6d4','#84cc16'] }
-    : { grid: '#334155', text: '#94a3b8', barColors: ['#6366f1','#22c55e','#f59e0b','#ef4444','#3b82f6','#ec4899','#a855f7','#14b8a6','#f97316','#8b5cf6','#06b6d4','#84cc16'] };
+    ? { grid: '#e2e8f0', text: '#64748b', barColors: ['#10b981','#22c55e','#f59e0b','#ef4444','#3b82f6','#ec4899','#a855f7','#14b8a6','#f97316','#8b5cf6','#06b6d4','#84cc16'] }
+    : { grid: '#334155', text: '#94a3b8', barColors: ['#10b981','#22c55e','#f59e0b','#ef4444','#3b82f6','#ec4899','#a855f7','#14b8a6','#f97316','#8b5cf6','#06b6d4','#84cc16'] };
 }
 
 // ---- Stats ----
 function renderStats() {
-  const total = expenses.reduce((s, e) => s + e.amount, 0);
+  const total = expenses.reduce((s, e) => s + amt(e), 0);
   document.getElementById('totalSpent').textContent = formatMoney(total);
   document.getElementById('entryCount').textContent = expenses.length.toLocaleString();
 
@@ -114,7 +135,7 @@ function renderStats() {
   const monthTotal = expenses.filter(e => {
     const d = new Date(e.date);
     return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
-  }).reduce((s, e) => s + e.amount, 0);
+  }).reduce((s, e) => s + amt(e), 0);
   document.getElementById('monthSpent').textContent = formatMoney(monthTotal);
 
   const avg = expenses.length > 0 ? total / expenses.length : 0;
@@ -122,15 +143,15 @@ function renderStats() {
 
   // Biggest expense
   if (expenses.length > 0) {
-    const biggest = expenses.reduce((a, b) => a.amount > b.amount ? a : b);
-    document.getElementById('biggestExpense').textContent = formatMoney(biggest.amount);
+    const biggest = expenses.reduce((a, b) => amt(a) > amt(b) ? a : b);
+    document.getElementById('biggestExpense').textContent = formatMoney(amt(biggest));
   } else {
     document.getElementById('biggestExpense').textContent = '—';
   }
 
   // Top category
   const byCat = {};
-  expenses.forEach(e => { byCat[e.category] = (byCat[e.category] || 0) + e.amount; });
+  expenses.forEach(e => { byCat[e.category] = (byCat[e.category] || 0) + amt(e); });
   const topCat = Object.entries(byCat).sort((a, b) => b[1] - a[1])[0];
   document.getElementById('topCategory').textContent = topCat ? topCat[0] : '—';
 
@@ -152,9 +173,9 @@ function renderInsights() {
   if (expenses.length === 0) { list.innerHTML = '<li class="insight-item">Add some expenses to see insights!</li>'; return; }
 
   const insights = [];
-  const total = expenses.reduce((s, e) => s + e.amount, 0);
+  const total = expenses.reduce((s, e) => s + amt(e), 0);
   const byCat = {};
-  expenses.forEach(e => { byCat[e.category] = (byCat[e.category] || 0) + e.amount; });
+  expenses.forEach(e => { byCat[e.category] = (byCat[e.category] || 0) + amt(e); });
   const sortedCats = Object.entries(byCat).sort((a, b) => b[1] - a[1]);
 
   // Top category insight
@@ -174,12 +195,12 @@ function renderInsights() {
   const thisMonth = expenses.filter(e => {
     const d = new Date(e.date);
     return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
-  }).reduce((s, e) => s + e.amount, 0);
+  }).reduce((s, e) => s + amt(e), 0);
   const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
   const lastMonthTotal = expenses.filter(e => {
     const d = new Date(e.date);
     return d.getMonth() === lastMonth.getMonth() && d.getFullYear() === lastMonth.getFullYear();
-  }).reduce((s, e) => s + e.amount, 0);
+  }).reduce((s, e) => s + amt(e), 0);
 
   if (lastMonthTotal > 0) {
     const change = ((thisMonth - lastMonthTotal) / lastMonthTotal * 100).toFixed(1);
@@ -196,8 +217,8 @@ function renderInsights() {
   }
 
   // Biggest single expense
-  const biggest = expenses.reduce((a, b) => a.amount > b.amount ? a : b);
-  insights.push(`🏆 Your biggest single expense was <strong>${escapeHtml(biggest.description)}</strong> at ${formatMoney(biggest.amount)} on ${formatDate(biggest.date)}.`);
+  const biggest = expenses.reduce((a, b) => amt(a) > amt(b) ? a : b);
+  insights.push(`🏆 Your biggest single expense was <strong>${escapeHtml(biggest.description)}</strong> at ${formatMoney(amt(biggest))} on ${formatDate(biggest.date)}.`);
 
   list.innerHTML = insights.map(i => `<li class="insight-item">${i}</li>`).join('');
 }
@@ -209,7 +230,7 @@ function renderCharts() {
   // Doughnut: by category
   const ctx1 = document.getElementById('categoryChart').getContext('2d');
   const byCat = {};
-  expenses.forEach(e => { byCat[e.category] = (byCat[e.category] || 0) + e.amount; });
+  expenses.forEach(e => { byCat[e.category] = (byCat[e.category] || 0) + amt(e); });
   const labels1 = Object.keys(byCat), data1 = Object.values(byCat);
   if (chart1) chart1.destroy();
   if (labels1.length > 0) {
@@ -232,13 +253,13 @@ function renderCharts() {
     return expenses.filter(e => {
       const ed = new Date(e.date);
       return ed.toDateString() === d.toDateString();
-    }).reduce((s, e) => s + e.amount, 0);
+    }).reduce((s, e) => s + amt(e), 0);
   });
   if (chart2) chart2.destroy();
   if (expenses.length > 0) {
     chart2 = new Chart(ctx2, {
       type: 'line',
-      data: { labels: dayLabels, datasets: [{ label: 'Daily Spending', data: dayData, borderColor: '#818cf8', fill: true, tension: 0.4, pointRadius: 3, pointHoverRadius: 6, pointBackgroundColor: '#818cf8', backgroundColor: function (c) { var g = c.chart.ctx.createLinearGradient(0, 0, 0, 280); g.addColorStop(0, 'rgba(129,140,248,.45)'); g.addColorStop(1, 'rgba(129,140,248,0)'); return g; } }] },
+      data: { labels: dayLabels, datasets: [{ label: 'Daily Spending', data: dayData, borderColor: '#34d399', fill: true, tension: 0.4, pointRadius: 3, pointHoverRadius: 6, pointBackgroundColor: '#34d399', backgroundColor: function (c) { var g = c.chart.ctx.createLinearGradient(0, 0, 0, 280); g.addColorStop(0, 'rgba(52,211,153,.45)'); g.addColorStop(1, 'rgba(52,211,153,0)'); return g; } }] },
       options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: colors.text, font: { size: 10 } } } }, scales: { x: { ticks: { color: colors.text, font: { size: 9 } }, grid: { display: false } }, y: { ticks: { color: colors.text, font: { size: 9 } }, grid: { color: 'rgba(255,255,255,.05)' } } } }
     });
   }
@@ -277,7 +298,7 @@ function renderList() {
         <span class="expense-meta">${e.category} · ${formatDate(e.date)}</span>
       </div>
       <div class="expense-actions">
-        <span class="expense-amount">${formatMoney(e.amount)}</span>
+        <span class="expense-amount">${formatMoney(amt(e))}</span>
         <button class="btn-edit" onclick="openEdit('${e.id}')" title="Edit">✏️</button>
         <button class="btn-delete" onclick="deleteExpense('${e.id}')" title="Delete">✕</button>
       </div>
@@ -287,7 +308,7 @@ function renderList() {
 
 // ---- Add Expense ----
 function addExpense(desc, amount, cat) {
-  expenses.push({ id: Date.now().toString() + Math.random().toString(36).slice(2, 6), description: desc, amount: parseFloat(amount), category: cat, date: new Date().toISOString() });
+  expenses.push({ id: Date.now().toString() + Math.random().toString(36).slice(2, 6), description: desc, amount: parseFloat(amount), currency: currentCurrency, category: cat, date: new Date().toISOString() });
   saveExpenses(); renderAll();
 }
 
@@ -298,6 +319,8 @@ function openEdit(id) {
   editingId = id;
   document.getElementById('editDescription').value = e.description;
   document.getElementById('editAmount').value = e.amount;
+  var eh = document.getElementById('editAmountHint');
+  if (eh) eh.textContent = 'Amount is in ' + currencies[e.currency || currentCurrency].label + ' (original entry currency).';
   // Populate category dropdown
   const sel = document.getElementById('editCategory');
   sel.innerHTML = categoryOptions.map(([v, l]) => `<option value="${v}" ${v === e.category ? 'selected' : ''}>${l}</option>`).join('');
@@ -354,16 +377,16 @@ function downloadPDF() {
   doc.setFontSize(14);
   doc.text('Summary Statistics', 14, 52);
 
-  const total = expenses.reduce((s, e) => s + e.amount, 0);
+  const total = expenses.reduce((s, e) => s + amt(e), 0);
   const avg = expenses.length > 0 ? total / expenses.length : 0;
   const dates = [...new Set(expenses.map(e => e.date.split('T')[0]))];
   const dailyAvg = total / Math.max(dates.length, 1);
 
   const byCat = {};
-  expenses.forEach(e => { byCat[e.category] = (byCat[e.category] || 0) + e.amount; });
+  expenses.forEach(e => { byCat[e.category] = (byCat[e.category] || 0) + amt(e); });
   const sortedCats = Object.entries(byCat).sort((a, b) => b[1] - a[1]);
   const topCat = sortedCats[0];
-  const biggest = expenses.reduce((a, b) => a.amount > b.amount ? a : b);
+  const biggest = expenses.reduce((a, b) => amt(a) > amt(b) ? a : b);
 
   doc.setFontSize(10);
   doc.setTextColor(80, 80, 80);
@@ -377,7 +400,7 @@ function downloadPDF() {
     ['Daily Average', formatMoney(dailyAvg)],
     ['Active Days', dates.length.toString()],
     ['Top Category', topCat ? topCat[0] : 'N/A'],
-    ['Biggest Expense', formatMoney(biggest.amount)],
+    ['Biggest Expense', formatMoney(amt(biggest))],
     ['Currency', c.label]
   ];
 
@@ -418,7 +441,7 @@ function downloadPDF() {
   // === EXPENSE TABLE ===
   yPos += 4;
   const tableData = expenses.slice().reverse().map((e, i) => [
-    (i + 1).toString(), e.description, e.category, formatDate(e.date), formatMoney(e.amount)
+    (i + 1).toString(), e.description, e.category, formatDate(e.date), formatMoney(amt(e))
   ]);
 
   doc.autoTable({
@@ -513,4 +536,5 @@ document.getElementById('profileForm').addEventListener('submit', function(e) {
 // ---- Init ----
 loadTheme();
 loadAll();
+loadRates();
 renderAll();
