@@ -1,0 +1,50 @@
+/* ===== ULTRA LUXURY PRO MAX — login enhancement ===== */
+.lg-stage { --p1: #10b981; --p2: #f5b942; --p3: #0d9488; }
+
+/* aurora mesh blobs */
+.lg-aurora { position: fixed; inset: -20%; z-index: 0; pointer-events: none; filter: blur(90px); opacity: .5; }
+.lg-aurora i { position: absolute; border-radius: 50%; mix-blend-mode: screen; animation: lg-float 16s ease-in-out infinite alternate; }
+.lg-aurora i:nth-child(1) { width: 46vmax; height: 46vmax; left: -12%; top: -16%; background: radial-gradient(circle at 30% 30%, var(--p1), transparent 65%); }
+.lg-aurora i:nth-child(2) { width: 38vmax; height: 38vmax; right: -12%; top: 18%; background: radial-gradient(circle at 60% 40%, var(--p2), transparent 65%); animation-delay: -6s; }
+.lg-aurora i:nth-child(3) { width: 32vmax; height: 32vmax; left: 32%; bottom: -18%; background: radial-gradient(circle at 50% 50%, var(--p3), transparent 60%); animation-delay: -11s; animation-duration: 21s; }
+@keyframes lg-float { from { transform: translate3d(0,0,0) scale(1); } to { transform: translate3d(6%,-5%,0) scale(1.18); } }
+
+/* rotating conic light border */
+.lg-card { position: relative; }
+@property --lg-a { syntax: '<angle>'; initial-value: 0deg; inherits: false; }
+.lg-card::before {
+  content: ""; position: absolute; inset: -1.5px; border-radius: inherit; padding: 1.5px;
+  background: conic-gradient(from var(--lg-a), transparent 0%, var(--p1) 12%, var(--p2) 24%, transparent 40%, transparent 62%, var(--p3) 78%, transparent 94%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  animation: lg-spin 6s linear infinite; pointer-events: none; z-index: 2;
+}
+@keyframes lg-spin { to { --lg-a: 360deg; } }
+
+/* staggered blur-in */
+.lg-pro-in { opacity: 0; transform: translateY(14px); filter: blur(8px); }
+.lg-pro-go { animation: lg-in .75s cubic-bezier(.2,.7,.2,1) forwards; }
+@keyframes lg-in { to { opacity: 1; transform: none; filter: blur(0); } }
+
+/* shimmer sweep on the CTA */
+.lg-cta { position: relative; overflow: hidden; }
+.lg-cta::after {
+  content: ""; position: absolute; top: 0; bottom: 0; width: 45%; left: -60%;
+  background: linear-gradient(105deg, transparent, rgba(255,255,255,.38), transparent);
+  transform: skewX(-18deg); animation: lg-shine 3.4s ease-in-out infinite; pointer-events: none;
+}
+@keyframes lg-shine { 0%, 55% { left: -60%; } 100% { left: 130%; } }
+
+/* input glow */
+.lg-input:focus { box-shadow: 0 0 0 1px var(--p1), 0 0 30px -6px var(--p1); }
+
+/* dust canvas */
+.lg-dust { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
+
+/* tilt */
+.lg-tilt { transition: transform .3s ease; will-change: transform; }
+
+@media (prefers-reduced-motion: reduce) {
+  .lg-aurora, .lg-card::before, .lg-cta::after { animation: none; }
+  .lg-pro-in { opacity: 1; transform: none; filter: none; }
+}

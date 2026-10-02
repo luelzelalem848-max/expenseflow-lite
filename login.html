@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ExpenseFlow Lite — Sign In</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://api.fontshare.com/v2/css?f[]=clash-display@500,600,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="login-screen.css?v=8" />
+  <link rel="stylesheet" href="login-pro.css?v=8" />
+  <link rel="stylesheet" href="modern.css?v=8" />
+<style>
+  body { background: #070d0a; }
+  .lg-bgmesh { position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background:
+      radial-gradient(60vmax 60vmax at 12% 18%, rgba(16,185,129,.16), transparent 60%),
+      radial-gradient(50vmax 50vmax at 88% 70%, rgba(245,185,66,.10), transparent 60%),
+      radial-gradient(40vmax 40vmax at 50% 100%, rgba(13,148,136,.12), transparent 60%); }
+</style>
+</head>
+<body>
+<div class="lg-stage">
+  <div class="lg-bgmesh"></div>
+  <div class="lg-vignette"></div>
+</div>
+
+<div class="lg-grid">
+  <div class="lg-brand rv-in">
+    <div class="lg-brand-logo">💸</div>
+    <h1 class="lg-brand-name">ExpenseFlow <span style="opacity:.6;font-weight:500">Lite</span></h1>
+    <p class="lg-brand-tag">All the power, none of the weight. Fast, private, beautiful.</p>
+    <div class="lg-brand-points">
+      <div>✦ 100% on-device privacy</div>
+      <div>✦ Live charts &amp; insights</div>
+      <div>✦ One-tap PDF reports</div>
+    </div>
+    <a class="lg-back" href="index.html">← Back to site</a>
+  </div>
+
+  <div class="lg-center">
+    <form class="lg-card" id="lgCard" autocomplete="off">
+      <div class="lg-halo"></div>
+      <div class="lg-logo">💸</div>
+      <h2 class="lg-title">Welcome back.</h2>
+      <p class="lg-sub">Enter your name to unlock your dashboard.</p>
+      <input class="lg-input" id="lgName" type="text" placeholder="Your name..." maxlength="40" autocomplete="off" />
+      <p class="lg-error" id="lgError">Please tell us your name first ✍️</p>
+      <button class="lg-cta" type="submit" id="lgCta">Enter Dashboard →</button>
+      <p class="lg-foot">🔒 Your data never leaves this device. No accounts, ever.</p>
+    </form>
+  </div>
+</div>
+
+<script src="login-pro.js?v=8"></script>
+<script>
+(function () {
+  var input = document.getElementById('lgName'),
+      card = document.getElementById('lgCard'),
+      err = document.getElementById('lgError'),
+      cta = document.getElementById('lgCta');
+  setTimeout(function () { input.focus(); }, 700);
+
+  function go() {
+    var name = (input.value || '').trim();
+    if (!name) {
+      err.classList.add('lg-show');
+      card.classList.remove('lg-shake');
+      void card.offsetWidth;
+      card.classList.add('lg-shake');
+      input.focus();
+      return;
+    }
+    localStorage.setItem('expenseflow_name', name);
+    cta.textContent = 'Unlocking...';
+    card.classList.add('lg-closing');
+    setTimeout(function () { location.href = 'app.html'; }, 460);
+  }
+  card.addEventListener('submit', function (e) { e.preventDefault(); go(); });
+  input.addEventListener('input', function () { err.classList.remove('lg-show'); });
+})();
+</script>
+  <script src="modern.js?v=8"></script>
+</body>
+</html>
